@@ -3,13 +3,21 @@
 version = 4
 
 [[package]]
-name = "bot"
+name = "control-service"
 version = "0.1.0"
 
 [[package]]
-name = "exchange"
+name = "market-data-service"
 version = "0.1.0"
 
 [[package]]
-name = "lib"
+name = "order-service"
+version = "0.1.0"
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+
+[[package]]
+name = "trade-service"
 version = "0.1.0"
