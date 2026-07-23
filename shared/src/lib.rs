@@ -1,5 +1,7 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+pub mod messages {
+    use tonic::include_proto;
+
+    include_proto!("grpc.tradeapi.v1.marketdata");
 }
 
 #[cfg(test)]
