@@ -1293,6 +1293,7 @@ dependencies = [
  "hyper-util",
  "serde",
  "serde_json",
+ "shared",
  "tokio",
  "tower 0.5.3",
  "tower-http",

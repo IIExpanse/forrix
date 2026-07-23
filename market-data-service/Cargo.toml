@@ -19,6 +19,7 @@ tower = "0.5"
 tower-http = { version = "0.6", features = ["trace", "cors", "request-id"] }
 hyper = "1"
 hyper-util = { version = "0.1", features = ["full"] }
+shared = { path = "../shared" }
 
 # Logging / tracing
 tracing = "0.1"
