@@ -1,16 +1,13 @@
 pub mod messages {
-    use tonic::include_proto;
-
-    include_proto!("grpc.tradeapi.v1.marketdata");
+    include!(concat!(env!("OUT_DIR"), "/mod.rs"));
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// #[cfg(test)]
+// mod tests {
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+//     #[test]
+//     fn it_works() {
+//         let result = add(2, 2);
+//         assert_eq!(result, 4);
+//     }
+// }

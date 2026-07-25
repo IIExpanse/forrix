@@ -1,4 +1,4 @@
-use shared::grpc::tradeapi::v1::marketdata::BarsRequest;
+use shared::messages::grpc::tradeapi::v1::marketdata::BarsRequest;
 
 fn main() {
     println!("Hello, world!");
