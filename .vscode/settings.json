@@ -2,7 +2,8 @@
     "conventionalCommits.scopes": [
         "control",
         "forrix",
-        "market-data"
+        "market-data",
+        "shared"
     ],
     "protobuf.protoc.path": "/usr/bin/protoc"
 }
