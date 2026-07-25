@@ -4,8 +4,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .include_file("mod.rs")
         .build_server(true) // generate server traits
         .compile_protos(
-            &["protos/finam/grpc/tradeapi/v1/marketdata/marketdata_service.proto", 
-            "protos/finam/google/type/interval.proto"],
+            &["protos/finam/grpc/tradeapi/v1/marketdata/marketdata_service.proto"],
             &["protos/finam"],
         )?;
 
