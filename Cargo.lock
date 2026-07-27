@@ -1240,6 +1240,7 @@ dependencies = [
  "serde_json",
  "shared",
  "tokio",
+ "tonic",
  "tower",
  "tower-http 0.7.0",
  "tracing",

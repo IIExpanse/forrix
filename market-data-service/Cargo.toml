@@ -17,6 +17,7 @@ clap = { version = "4", features = ["derive", "env"] }
 axum = { version = "0.8", features = ["macros"] }
 tower = "0.5"
 tower-http = { version = "0.7.0", features = ["trace", "cors", "request-id"] }
+tonic = "0.14.6"
 hyper = "1"
 hyper-util = { version = "0.1", features = ["full"] }
 shared = { path = "../shared" }
