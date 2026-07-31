@@ -2,7 +2,6 @@ use hyper::Uri;
 use shared::messages::grpc::tradeapi::v1::auth::AuthRequest;
 use shared::messages::grpc::tradeapi::v1::auth::SubscribeJwtRenewalRequest;
 use shared::messages::grpc::tradeapi::v1::auth::auth_service_client;
-use shared::messages::grpc::tradeapi::v1::auth::auth_service_client::AuthServiceClient;
 use shared::messages::grpc::tradeapi::v1::marketdata::SubscribeBarsRequest;
 use shared::messages::grpc::tradeapi::v1::marketdata::TimeFrame;
 use shared::messages::grpc::tradeapi::v1::marketdata::market_data_service_client;
@@ -12,6 +11,10 @@ use std::sync::RwLock;
 use tonic::Request;
 use tonic::metadata::MetadataValue;
 use tonic::transport::Channel;
+
+mod application;
+mod infrastructure;
+mod domain;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -85,7 +88,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn start_jwt_renewal(
-    mut client: AuthServiceClient<Channel>,
+    mut client: auth_service_client::AuthServiceClient<Channel>,
     api_token: String,
     jwt_token_lock: RwLock<String>,
 ) {
