@@ -5,5 +5,7 @@
         "market-data",
         "shared"
     ],
-    "protobuf.protoc.path": "/usr/bin/protoc"
+    "protobuf.protoc.path": "/usr/bin/protoc",
+    "editor.formatOnSave": true,
+    "rust-analyzer.check.command": "clippy"
 }
