@@ -1,2 +1,2 @@
-mod auth_client;
+pub mod auth_client;
 mod market_data_client;
