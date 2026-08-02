@@ -11,13 +11,24 @@ use std::sync::RwLock;
 use tonic::Request;
 use tonic::metadata::MetadataValue;
 use tonic::transport::Channel;
+use tracing::Level;
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 mod application;
-mod infrastructure;
 mod domain;
+mod infrastructure;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let filter = EnvFilter::builder()
+        .with_default_directive(Level::INFO.into())
+        .from_env_lossy();
+
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(filter)
+        .init();
+
     let api_url = env::var("API_URL").expect("API_URL must be provided.");
     let api_token = env::var("API_TOKEN").expect("API_TOKEN must be provided.");
 
