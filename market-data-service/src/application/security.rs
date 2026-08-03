@@ -1,1 +1,1 @@
-mod auth_manager;
+pub mod auth_manager;
