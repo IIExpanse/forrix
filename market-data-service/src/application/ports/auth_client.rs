@@ -1,5 +1,6 @@
 use shared::messages::grpc::tradeapi::v1::auth::{self, auth_service_client};
 use std::sync::{Arc, RwLock};
+use tokio::task::JoinHandle;
 
 use tonic::transport::Channel;
 use tracing::{debug, error, info, warn};
@@ -28,7 +29,7 @@ impl FinamAuthGrpcClient {
         mut client: auth_service_client::AuthServiceClient<Channel>,
         api_token: &str,
         token_holder: Arc<RwLock<String>>,
-    ) -> Result<(), AppError> {
+    ) -> Result<JoinHandle<Result<(), AppError>>, AppError> {
         info!("Getting initial jwt_token.");
 
         let res = client
@@ -49,13 +50,11 @@ impl FinamAuthGrpcClient {
         };
         *token_holder.write().unwrap() = jwt_token;
 
-        tokio::spawn(Self::start_jwt_renewal(
+        Ok(tokio::spawn(Self::start_jwt_renewal(
             client,
             api_token.to_string(),
             token_holder,
-        ));
-
-        Ok(())
+        )))
     }
 
     async fn start_jwt_renewal(
