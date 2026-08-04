@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Rust: Debug with args",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/target/debug/${workspaceFolderBasename}",
+      "args": ["--config", "config.toml", "-v"],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "cargo: build",
+      "env": {
+        "RUST_LOG": "debug"
+      }
+    }
+  ]
+}
