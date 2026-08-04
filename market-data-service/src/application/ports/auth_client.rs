@@ -10,7 +10,7 @@ use crate::application::errors::app_errors::AppError;
 pub struct FinamAuthGrpcClient;
 
 impl FinamAuthGrpcClient {
-    pub async fn create_grpc_client(
+    pub async fn create_client(
         api_url: &str,
     ) -> Result<auth_service_client::AuthServiceClient<Channel>, AppError> {
         info!("Initializing gRPC auth connection to {}", api_url);
@@ -49,6 +49,7 @@ impl FinamAuthGrpcClient {
             }
         };
         *token_holder.write().unwrap() = jwt_token;
+        info!("Initial jwt_token received.");
 
         Ok(tokio::spawn(Self::start_jwt_renewal(
             client,
@@ -88,7 +89,7 @@ impl FinamAuthGrpcClient {
 
                                     *token_holder.write().map_err(|e| AppError {
                                         message: format!(
-                                            "Failure while acquiring write lock: {}",
+                                            "There is a PoisonError in token lock: {}",
                                             e
                                         ),
                                         cause: None,
