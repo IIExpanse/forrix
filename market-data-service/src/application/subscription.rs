@@ -1,1 +1,1 @@
-mod subscriber;
+pub mod subscriber;
