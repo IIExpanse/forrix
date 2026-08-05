@@ -1,4 +1,4 @@
-mod errors;
+pub mod errors;
 mod ports;
 pub mod security;
 pub mod subscription;
