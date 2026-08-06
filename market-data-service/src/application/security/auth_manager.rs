@@ -1,3 +1,4 @@
+use shared::application::errors::app_errors::AppError;
 use std::sync::{Arc, RwLock};
 use tokio::task::JoinHandle;
 use tonic::Status;
@@ -6,7 +7,6 @@ use tonic::service::Interceptor;
 
 use tracing::info;
 
-use crate::application::errors::app_errors::AppError;
 use crate::infrastructure::broker::finam::auth_client;
 
 pub struct AuthManager {

@@ -1,11 +1,12 @@
-use shared::messages::grpc::tradeapi::v1::auth::{self, auth_service_client};
+use shared::{
+    application::errors::app_errors::AppError,
+    messages::grpc::tradeapi::v1::auth::{self, auth_service_client},
+};
 use std::sync::{Arc, RwLock};
 use tokio::task::JoinHandle;
 
 use tonic::transport::Channel;
 use tracing::{debug, error, info, warn};
-
-use crate::application::errors::app_errors::AppError;
 
 pub struct FinamAuthGrpcClient;
 

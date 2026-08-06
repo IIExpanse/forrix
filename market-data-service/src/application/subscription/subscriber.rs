@@ -1,17 +1,17 @@
 use hyper::Uri;
-use shared::messages::grpc::tradeapi::v1::marketdata::{
-    Bar, SubscribeBarsRequest, TimeFrame,
-    market_data_service_client::{self, MarketDataServiceClient},
+use shared::{
+    application::errors::app_errors::AppError,
+    messages::grpc::tradeapi::v1::marketdata::{
+        Bar, SubscribeBarsRequest, TimeFrame,
+        market_data_service_client::{self, MarketDataServiceClient},
+    },
 };
 use std::str::FromStr;
 use tokio::task::JoinHandle;
 use tonic::{Request, service::interceptor::InterceptedService, transport::Channel};
 use tracing::{error, warn};
 
-use crate::application::{
-    errors::app_errors::AppError,
-    security::auth_manager::{AuthInterceptor, AuthManager},
-};
+use crate::application::security::auth_manager::{AuthInterceptor, AuthManager};
 
 pub trait Subscriber<T> {
     async fn subscribe(&mut self) -> Result<(), AppError>;

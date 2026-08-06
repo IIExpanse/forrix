@@ -1239,7 +1239,6 @@ dependencies = [
  "serde",
  "serde_json",
  "shared",
- "thiserror",
  "tokio",
  "tonic",
  "tower",
@@ -2074,6 +2073,7 @@ version = "0.1.0"
 dependencies = [
  "prost",
  "prost-types",
+ "thiserror",
  "tonic",
  "tonic-prost",
  "tonic-prost-build",
