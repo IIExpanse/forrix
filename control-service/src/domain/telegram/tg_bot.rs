@@ -2,12 +2,12 @@ pub enum InfoState {
     Start,
     GetSystemState,
     GetCurrentConfig,
-    GetChosenInstrumentInfo,
+    GetChosenInstrumentInfo { ticker: str },
 }
 
 pub enum CommandState {
-    SetInstrument,
-    SetAmount,
+    SetInstrument { ticker: str },
+    SetAmount { amount: u32 },
     Buy,
     Sell,
     ClosePosition,
