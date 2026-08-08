@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb", // requires lldb
+        "tamasfe.even-better-toml",
+        "fill-labs.dependi",
+        "usernamehw.errorlens",
+        "gruntfuggly.todo-tree", // requires ripgrep
+        "swellaby.vscode-rust-test-adapter"
+    ]
+}
