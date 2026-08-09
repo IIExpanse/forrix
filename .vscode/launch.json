@@ -5,13 +5,19 @@
       "name": "Rust: Debug with args",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/target/debug/${workspaceFolderBasename}",
-      "args": ["--config", "config.toml", "-v"],
+      "program": "${workspaceFolder}/target/debug/change_me", // Replace 'change_me' with your binary name
+      "args": [
+        "--config",
+        "${workspaceFolder}/config.toml",
+        "-v"
+      ],
       "cwd": "${workspaceFolder}",
       "preLaunchTask": "cargo: build",
       "env": {
-        "RUST_LOG": "debug"
-      }
+        "RUST_LOG": "debug",
+        "RUST_BACKTRACE": "full"
+      },
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }
