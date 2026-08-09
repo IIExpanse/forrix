@@ -6,8 +6,8 @@ use shared::{
         market_data_service_client::{self, MarketDataServiceClient},
     },
 };
-use std::str::FromStr;
-use tokio::task::JoinHandle;
+use std::{str::FromStr, time::Duration};
+use tokio::{task::JoinHandle, time::sleep};
 use tonic::{Request, service::interceptor::InterceptedService, transport::Channel};
 use tracing::{error, warn};
 
@@ -73,10 +73,11 @@ impl Subscriber<&Bar> for BarsSubscriber {
             if let Err(e) = resp {
                 error!("Error while subscribing to bars: {}", e);
                 attempts += 1;
+                sleep(Duration::from_millis(200)).await;
 
                 if attempts >= 5 {
                     error!("Connection attempts exceeded for bars stream, aborting");
-                    return Ok(());
+                    return Err(e);
                 }
                 continue;
             }
