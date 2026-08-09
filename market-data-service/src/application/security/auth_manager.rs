@@ -64,7 +64,7 @@ impl Interceptor for AuthInterceptor {
         let bearer_token: MetadataValue<_> = MetadataValue::try_from("Bearer ".to_owned() + &token)
             .expect("Only visible ASCII characters (32-127) are permitted.");
 
-        request.metadata_mut().insert("Authorization", bearer_token);
+        request.metadata_mut().insert("authorization", bearer_token);
 
         Ok(request)
     }
