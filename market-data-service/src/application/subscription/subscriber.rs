@@ -30,6 +30,11 @@ impl BarsSubscriber {
         auth_manager: &AuthManager,
     ) -> Result<BarsSubscriber, AppError> {
         let channel = Channel::builder(Uri::from_str(api_url).expect("API_URL must be valid."))
+            .tls_config(tonic::transport::ClientTlsConfig::new().with_native_roots())
+            .map_err(|e| AppError {
+                message: "Failed to configure tls for MarketDataSubscriber".to_owned(),
+                cause: Some(Box::new(e)),
+            })?
             .connect()
             .await
             .map_err(|e| AppError {
@@ -52,7 +57,7 @@ impl BarsSubscriber {
 impl Subscriber<&Bar> for BarsSubscriber {
     async fn subscribe(&mut self) -> Result<(), AppError> {
         let sub_request = SubscribeBarsRequest {
-            symbol: "IMOEXF".to_string(),
+            symbol: "IMOEXF@RTSX".to_string(),
             timeframe: TimeFrame::M1 as i32,
         };
 
