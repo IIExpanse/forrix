@@ -2,8 +2,11 @@ use shared::{
     application::errors::app_errors::AppError,
     messages::grpc::tradeapi::v1::auth::{self, auth_service_client},
 };
-use std::sync::{Arc, RwLock};
-use tokio::task::JoinHandle;
+use std::{
+    sync::{Arc, RwLock},
+    time::Duration,
+};
+use tokio::{task::JoinHandle, time::sleep};
 
 use tonic::transport::Channel;
 use tracing::{debug, error, info, warn};
@@ -113,6 +116,7 @@ impl FinamAuthGrpcClient {
                         error
                     );
                     attempts += 1;
+                    sleep(Duration::from_millis(200)).await;
 
                     if attempts == 5 {
                         error!("Connection attempts exceeded, stopping token renewal.");
