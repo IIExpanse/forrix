@@ -1,7 +1,7 @@
 # 1. Build Stage
 FROM rust:1.97.1 AS builder
 WORKDIR /usr/src/app
-COPY . .
+COPY ./control-service .
 RUN cargo generate-lockfile && cargo build --release
 
 # 2. Runtime Stage
