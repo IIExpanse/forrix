@@ -8,7 +8,11 @@ tonic-prost-build = "0.14.6"
 
 [dependencies]
 tonic-prost = "0.14.6"
-tonic = "0.14.6"
+tonic = { version = "0.14.6", features = [
+    "transport",
+    "tls-ring",
+    "tls-native-roots",
+] }
 # tonic-reflection = "0.14.6"
 prost = "0.14.4"
 prost-types = "0.14.4"
