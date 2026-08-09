@@ -1,8 +1,10 @@
 #!/bin/bash
 
 set -euo pipefail
+service_name='control-service'
+
 read -rsp "Enter telegram bot token: " token
 echo ""
-docker stop control-service || true
-docker rm control-service || true
-docker run -e TELOXIDE_TOKEN="$token" -e RUST_LOG=debug --name control-service control-service
+docker stop "$service_name" || true
+docker rm "$service_name" || true
+docker run -e TELOXIDE_TOKEN="$token" -e RUST_LOG=debug --name "$service_name" "$service_name"

@@ -1,7 +1,9 @@
 #!/bin/bash
 
 set -euo pipefail
-docker stop control-service || true
-docker rm control-service || true
-docker rmi control-service || true
-docker build --progress=plain -t control-service ./control-service
+service_name='control-service'
+
+docker stop "$service_name" || true
+docker rm "$service_name" || true
+docker rmi "$service_name" || true
+docker build --progress=plain -t "$service_name" f ./docker/"$service_name"/Dockerfile .
