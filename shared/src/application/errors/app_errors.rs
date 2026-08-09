@@ -10,6 +10,9 @@ pub struct AppError {
 
 impl fmt::Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "({})", self.message)
+        if let Some(cause) = self.cause.as_ref() {
+            return write!(f, "(message: {}, cause: {:#?})", self.message, cause);
+        }
+        write!(f, "(message: {}, cause: None)", self.message)
     }
 }
