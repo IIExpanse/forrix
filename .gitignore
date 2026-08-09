@@ -15,4 +15,4 @@ target
 
 # Local config
 config.toml
-
+.env
