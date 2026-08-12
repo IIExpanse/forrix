@@ -6,8 +6,7 @@ pub enum InfoState {
 }
 
 pub enum CommandState {
-    SetInstrument { ticker: str },
-    SetMic,
+    SetInstrument { ticker: str, mic: str },
     SetAmount { amount: u32 },
     Buy,
     Sell,
