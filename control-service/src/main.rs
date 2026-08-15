@@ -1,5 +1,9 @@
 use teloxide::prelude::*;
 
+mod application;
+mod domain;
+mod infrastructure;
+
 #[tokio::main]
 async fn main() {
     pretty_env_logger::init();
