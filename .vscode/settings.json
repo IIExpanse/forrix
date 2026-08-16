@@ -20,5 +20,6 @@
         "[ ]",
         "[x]",
         "todo"
-    ]
+    ],
+    "rust-analyzer.workspace.symbol.search.scope": "workspace_and_dependencies"
 }
