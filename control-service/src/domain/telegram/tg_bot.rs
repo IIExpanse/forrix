@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use teloxide::{
     Bot,
     dispatching::{
@@ -45,11 +47,13 @@ pub enum Command {
     ClosePosition,
 }
 
-struct TgChat {
+struct ChatState {
     ticker: Option<String>,
     mic: Option<String>,
     amount: Option<u32>,
 }
+
+struct TgChat;
 
 // todo refactor one-arg setter functions into generic
 impl TgChat {
@@ -59,8 +63,15 @@ impl TgChat {
         Ok(())
     }
 
-    async fn set_instrument(&mut self, bot: Bot, msg: Message, ticker: String) -> HandlerResult {
-        self.ticker = Some(ticker.clone());
+    async fn set_instrument(
+        state_mutex: Arc<Mutex<ChatState>>,
+        bot: Bot,
+        msg: Message,
+        ticker: String,
+    ) -> HandlerResult {
+        {
+            state_mutex.lock().unwrap().ticker = Some(ticker.clone());
+        }
 
         bot.send_message(msg.chat.id, format!("Saved: ticker = {}", ticker))
             .await?;
@@ -68,8 +79,15 @@ impl TgChat {
         Ok(())
     }
 
-    async fn set_mic(&mut self, bot: Bot, msg: Message, mic: String) -> HandlerResult {
-        self.mic = Some(mic.clone());
+    async fn set_mic(
+        state_mutex: Arc<Mutex<ChatState>>,
+        bot: Bot,
+        msg: Message,
+        mic: String,
+    ) -> HandlerResult {
+        {
+            state_mutex.lock().unwrap().mic = Some(mic.clone());
+        }
 
         bot.send_message(msg.chat.id, format!("Saved: mic = {}", mic))
             .await?;
@@ -77,8 +95,15 @@ impl TgChat {
         Ok(())
     }
 
-    async fn set_amount(&mut self, bot: Bot, msg: Message, amount: u32) -> HandlerResult {
-        self.amount = Some(amount);
+    async fn set_amount(
+        state_mutex: Arc<Mutex<ChatState>>,
+        bot: Bot,
+        msg: Message,
+        amount: u32,
+    ) -> HandlerResult {
+        {
+            state_mutex.lock().unwrap().amount = Some(amount);
+        }
 
         bot.send_message(msg.chat.id, format!("Saved: amount = {}", amount))
             .await?;
