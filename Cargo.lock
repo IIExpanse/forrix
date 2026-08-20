@@ -361,10 +361,11 @@ dependencies = [
 name = "control-service"
 version = "0.1.0"
 dependencies = [
- "log",
  "pretty_env_logger",
  "teloxide",
  "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
