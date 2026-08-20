@@ -2,20 +2,17 @@ use std::sync::{Arc, Mutex};
 
 use teloxide::{
     Bot,
-    dispatching::{
-        Dispatcher, HandlerExt, UpdateFilterExt, UpdateHandler,
-        dialogue::{Dialogue, InMemStorage},
-    },
+    dispatching::{Dispatcher, UpdateFilterExt},
     dptree,
-    repls::CommandReplExt,
-    requests::{Requester, ResponseResult},
+    requests::Requester,
     types::{Message, Update},
     utils::command::BotCommands,
 };
+use tracing::error;
 
 type HandlerResult = Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
-#[derive(BotCommands, Clone, Default)]
+#[derive(BotCommands, Clone, Default, Debug)]
 #[command(
     rename_rule = "lowercase",
     description = "These commands are supported:"
@@ -57,9 +54,8 @@ struct TgChat;
 
 // todo refactor one-arg setter functions into generic
 impl TgChat {
-    async fn start(bot: Bot, msg: Message) -> HandlerResult {
-        bot.send_message(msg.chat.id, Command::descriptions().to_string())
-            .await?;
+    async fn start(bot: Bot, msg: Message, txt: String) -> HandlerResult {
+        bot.send_message(msg.chat.id, txt).await?;
         Ok(())
     }
 
@@ -111,29 +107,39 @@ impl TgChat {
         Ok(())
     }
 
-    // async fn commands_handler(bot: Bot, msg: Message, cmd: Command) {
-    //     let handler = Update::filter_message().endpoint(|bot: Bot, msg: Message| async move {
-    //         let cmd: Command = Command::parse(msg.text().unwrap(), "bot_username").unwrap();
-    //         match cmd {
-    //             Command::Start => todo!(),
-    //             Command::GetSystemHealth => todo!(),
-    //             Command::GetCurrentConfig => todo!(),
-    //             Command::GetChosenInstrumentInfo { ticker } => todo!(),
-    //             Command::SetInstrument { ticker } => todo!(),
-    //             Command::SetMic { mic } => todo!(),
-    //             Command::SetAmount { amount } => todo!(),
-    //             Command::Buy => todo!(),
-    //             Command::Sell => todo!(),
-    //             Command::ClosePosition => todo!(),
-    //         }
-    //     });
+    async fn commands_handler(bot: Bot, state_mutex: Arc<Mutex<ChatState>>) {
+        let handler = Update::filter_message().endpoint(
+            |local_bot: Bot, local_msg: Message, state_mutex: Arc<Mutex<ChatState>>| async {
+                let cmd: Command =
+                    Command::parse(local_msg.text().unwrap(), "bot_username").unwrap();
+                let res = match cmd {
+                    Command::Start => {
+                        Self::start(local_bot, local_msg, Command::descriptions().to_string()).await
+                    }
+                    Command::GetSystemHealth => todo!(),
+                    Command::GetCurrentConfig => todo!(),
+                    Command::GetChosenInstrumentInfo { ticker } => todo!(),
+                    Command::SetInstrument { ticker } => todo!(),
+                    Command::SetMic { mic } => todo!(),
+                    Command::SetAmount { amount } => todo!(),
+                    Command::Buy => todo!(),
+                    Command::Sell => todo!(),
+                    Command::ClosePosition => todo!(),
+                };
+                if let Err(err) = res {
+                    error!("Error while execuring {:#?} command: {}", cmd, err);
+                    return Err(err);
+                };
+                res
+            },
+        );
 
-    //     Dispatcher::builder(bot, handler)
-    //         // Pass the shared state to the handler as a dependency.
-    //         .dependencies(dptree::deps![messages_total])
-    //         .enable_ctrlc_handler()
-    //         .build()
-    //         .dispatch()
-    //         .await;
-    // }
+        Dispatcher::builder(bot, handler)
+            // Pass the shared state to the handler as a dependency.
+            .dependencies(dptree::deps![state_mutex])
+            .enable_ctrlc_handler()
+            .build()
+            .dispatch()
+            .await;
+    }
 }
