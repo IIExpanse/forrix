@@ -8,7 +8,7 @@ use teloxide::{
     types::{Message, Update},
     utils::command::BotCommands,
 };
-use tracing::error;
+use tracing::{debug, error};
 
 type HandlerResult = Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
@@ -54,74 +54,62 @@ struct TgChat;
 
 // todo refactor one-arg setter functions into generic
 impl TgChat {
-    async fn start(bot: Bot, msg: Message, txt: String) -> HandlerResult {
-        bot.send_message(msg.chat.id, txt).await?;
-        Ok(())
-    }
-
-    async fn set_instrument(
-        state_mutex: Arc<Mutex<ChatState>>,
-        bot: Bot,
-        msg: Message,
-        ticker: String,
-    ) -> HandlerResult {
-        {
-            state_mutex.lock().unwrap().ticker = Some(ticker.clone());
-        }
-
-        bot.send_message(msg.chat.id, format!("Saved: ticker = {}", ticker))
-            .await?;
-
-        Ok(())
-    }
-
-    async fn set_mic(
-        state_mutex: Arc<Mutex<ChatState>>,
-        bot: Bot,
-        msg: Message,
-        mic: String,
-    ) -> HandlerResult {
-        {
-            state_mutex.lock().unwrap().mic = Some(mic.clone());
-        }
-
-        bot.send_message(msg.chat.id, format!("Saved: mic = {}", mic))
-            .await?;
-
-        Ok(())
-    }
-
-    async fn set_amount(
-        state_mutex: Arc<Mutex<ChatState>>,
-        bot: Bot,
-        msg: Message,
-        amount: u32,
-    ) -> HandlerResult {
-        {
-            state_mutex.lock().unwrap().amount = Some(amount);
-        }
-
-        bot.send_message(msg.chat.id, format!("Saved: amount = {}", amount))
-            .await?;
-
-        Ok(())
-    }
-
-    async fn commands_handler(bot: Bot, state_mutex: Arc<Mutex<ChatState>>) {
+    async fn start_dispatcher(bot: Bot, state_mutex: Arc<Mutex<ChatState>>) {
         let handler = Update::filter_message().endpoint(
-            |local_bot: Bot, local_msg: Message, state_mutex: Arc<Mutex<ChatState>>| async {
-                let cmd: Command =
-                    Command::parse(local_msg.text().unwrap(), "bot_username").unwrap();
-                let res = match cmd {
+            |local_bot: Bot, msg: Message, state_mutex: Arc<Mutex<ChatState>>| async {
+                let message = msg.text();
+                if message.is_none() {
+                    return Self::log_output("processing input", || {
+                        Self::send_message(
+                            local_bot,
+                            msg,
+                            "Text command is expected. Type /start to see command list.".to_owned(),
+                        )
+                    })
+                    .await;
+                }
+
+                let parts: Vec<&str> = message.unwrap().split(" ").collect();
+                if parts.is_empty() {
+                    return Self::log_output("processing input", || {
+                        Self::send_message(
+                            local_bot,
+                            msg,
+                            "Message is empty. Type /start to see command list.".to_owned(),
+                        )
+                    })
+                    .await;
+                }
+
+                let cmd = Command::parse(parts[0].trim(), "bot_username");
+                if cmd.is_err() {
+                    return Self::log_output("processing input", || {
+                        Self::send_message(
+                            local_bot,
+                            msg,
+                            "Command is invalid. Type /start to see command list.".to_owned(),
+                        )
+                    })
+                    .await;
+                }
+
+                let res = match cmd.as_ref().unwrap() {
                     Command::Start => {
-                        Self::start(local_bot, local_msg, Command::descriptions().to_string()).await
+                        Self::send_message(local_bot, msg, Command::descriptions().to_string())
+                            .await
                     }
                     Command::GetSystemHealth => todo!(),
                     Command::GetCurrentConfig => todo!(),
                     Command::GetChosenInstrumentInfo { ticker } => todo!(),
-                    Command::SetInstrument { ticker } => todo!(),
-                    Command::SetMic { mic } => todo!(),
-                    Command::SetAmount { amount } => todo!(),
+                    Command::SetInstrument { ticker } => {
+                        Self::set_instrument(local_bot, msg, state_mutex, ticker).await
+                    }
+                    Command::SetMic { mic } => {
+                        Self::set_mic(local_bot, msg, state_mutex, mic).await
+                    }
+                    Command::SetAmount { amount } => {
+                        Self::set_amount(local_bot, msg, state_mutex, amount).await
+                    }
                     Command::Buy => todo!(),
                     Command::Sell => todo!(),
                     Command::ClosePosition => todo!(),
@@ -141,5 +129,71 @@ impl TgChat {
             .build()
             .dispatch()
             .await;
+    }
+
+    async fn send_message(bot: Bot, msg: Message, text: String) -> HandlerResult {
+        bot.send_message(msg.chat.id, text).await?;
+        Ok(())
+    }
+
+    async fn set_instrument(
+        bot: Bot,
+        msg: Message,
+        state_mutex: Arc<Mutex<ChatState>>,
+        ticker: &str,
+    ) -> HandlerResult {
+        {
+            state_mutex.lock().unwrap().ticker = Some(ticker.to_owned());
+        }
+
+        bot.send_message(msg.chat.id, format!("Saved: ticker = {}", ticker))
+            .await?;
+
+        Ok(())
+    }
+
+    async fn set_mic(
+        bot: Bot,
+        msg: Message,
+        state_mutex: Arc<Mutex<ChatState>>,
+        mic: &str,
+    ) -> HandlerResult {
+        {
+            state_mutex.lock().unwrap().mic = Some(mic.to_owned());
+        }
+
+        bot.send_message(msg.chat.id, format!("Saved: mic = {}", mic))
+            .await?;
+
+        Ok(())
+    }
+
+    async fn set_amount(
+        bot: Bot,
+        msg: Message,
+        state_mutex: Arc<Mutex<ChatState>>,
+        amount: &u32,
+    ) -> HandlerResult {
+        {
+            state_mutex.lock().unwrap().amount = Some(amount.clone());
+        }
+
+        bot.send_message(msg.chat.id, format!("Saved: amount = {}", amount))
+            .await?;
+
+        Ok(())
+    }
+
+    async fn log_output<F>(action_description: &str, func: F) -> HandlerResult
+    where
+        F: AsyncFnOnce() -> HandlerResult,
+    {
+        let res = func().await;
+        if let Err(err) = res {
+            error!("Error while {}: {}", action_description, err);
+            return Err(err);
+        };
+        debug!("Successfully processed command {}", action_description);
+        res
     }
 }
