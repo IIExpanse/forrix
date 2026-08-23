@@ -175,7 +175,7 @@ impl TgChat {
         amount: &u32,
     ) -> HandlerResult {
         {
-            state_mutex.lock().unwrap().amount = Some(amount.clone());
+            state_mutex.lock().unwrap().amount = Some(*amount);
         }
 
         bot.send_message(msg.chat.id, format!("Saved: amount = {}", amount))
