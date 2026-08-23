@@ -44,6 +44,7 @@ pub enum Command {
     ClosePosition,
 }
 
+#[derive(Debug, Clone)]
 struct ChatState {
     ticker: Option<String>,
     mic: Option<String>,
@@ -99,7 +100,9 @@ impl TgChat {
                             .await
                     }
                     Command::GetSystemHealth => todo!(),
-                    Command::GetCurrentConfig => todo!(),
+                    Command::GetCurrentConfig => {
+                        Self::get_current_config(local_bot, msg, state_mutex).await
+                    }
                     Command::GetChosenInstrumentInfo { ticker } => todo!(),
                     Command::SetInstrument { ticker } => {
                         Self::set_instrument(local_bot, msg, state_mutex, ticker).await
@@ -133,6 +136,22 @@ impl TgChat {
 
     async fn send_message(bot: Bot, msg: Message, text: String) -> HandlerResult {
         bot.send_message(msg.chat.id, text).await?;
+        Ok(())
+    }
+
+    async fn get_current_config(
+        bot: Bot,
+        msg: Message,
+        state_mutex: Arc<Mutex<ChatState>>,
+    ) -> HandlerResult {
+        let config;
+        {
+            config = state_mutex.lock().unwrap().clone();
+        }
+
+        bot.send_message(msg.chat.id, format!("Current config: {:#?}", config))
+            .await?;
+
         Ok(())
     }
 
