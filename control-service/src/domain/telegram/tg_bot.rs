@@ -10,6 +10,8 @@ use teloxide::{
 };
 use tracing::{debug, error};
 
+use crate::domain::trade::trade_engine::TradeState;
+
 type HandlerResult = Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
 #[derive(BotCommands, Clone, Default, Debug)]
@@ -44,20 +46,13 @@ pub enum Command {
     ClosePosition,
 }
 
-#[derive(Debug, Clone)]
-struct ChatState {
-    ticker: Option<String>,
-    mic: Option<String>,
-    amount: Option<u32>,
-}
-
 struct TgChat;
 
 // todo refactor one-arg setter functions into generic
 impl TgChat {
-    async fn start_dispatcher(bot: Bot, state_mutex: Arc<Mutex<ChatState>>) {
+    async fn start_dispatcher(bot: Bot, state_mutex: Arc<Mutex<TradeState>>) {
         let handler = Update::filter_message().endpoint(
-            |local_bot: Bot, msg: Message, state_mutex: Arc<Mutex<ChatState>>| async {
+            |local_bot: Bot, msg: Message, state_mutex: Arc<Mutex<TradeState>>| async {
                 let message = msg.text();
                 if message.is_none() {
                     return Self::log_output("processing input", || {
@@ -142,7 +137,7 @@ impl TgChat {
     async fn get_current_config(
         bot: Bot,
         msg: Message,
-        state_mutex: Arc<Mutex<ChatState>>,
+        state_mutex: Arc<Mutex<TradeState>>,
     ) -> HandlerResult {
         let config;
         {
@@ -158,7 +153,7 @@ impl TgChat {
     async fn set_instrument(
         bot: Bot,
         msg: Message,
-        state_mutex: Arc<Mutex<ChatState>>,
+        state_mutex: Arc<Mutex<TradeState>>,
         ticker: &str,
     ) -> HandlerResult {
         {
@@ -174,7 +169,7 @@ impl TgChat {
     async fn set_mic(
         bot: Bot,
         msg: Message,
-        state_mutex: Arc<Mutex<ChatState>>,
+        state_mutex: Arc<Mutex<TradeState>>,
         mic: &str,
     ) -> HandlerResult {
         {
@@ -190,7 +185,7 @@ impl TgChat {
     async fn set_amount(
         bot: Bot,
         msg: Message,
-        state_mutex: Arc<Mutex<ChatState>>,
+        state_mutex: Arc<Mutex<TradeState>>,
         amount: &u32,
     ) -> HandlerResult {
         {
