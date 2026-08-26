@@ -1,5 +1,5 @@
 [package]
-name = "market-data-service"
+name = "exchange-service"
 version = "0.1.0"
 edition = "2024"
 

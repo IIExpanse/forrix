@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
-service_name='control-service'
+service_name='trade-service'
 
 read -rsp "Enter telegram bot token: " token
 echo ""

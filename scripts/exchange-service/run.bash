@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
-service_name='market-data-service'
+service_name='exchange-service'
 
 read -rsp "Enter api url: " api_url
 echo ""

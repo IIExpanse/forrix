@@ -1,9 +1,8 @@
 {
     "conventionalCommits.scopes": [
-        "control",
+        "exchange",
         "forrix",
-        "market-data",
-        "shared"
+        "trade"
     ],
     "rust-analyzer.check.command": "clippy",
     "rust-analyzer.cargo.features": "all",

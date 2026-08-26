@@ -1,3 +1,3 @@
 [workspace]
 resolver = "3"
-members = ["trade-service", "market-data-service", "order-service", "control-service", "shared"]
+members = ["trade-service", "exchange-service", "shared"]
