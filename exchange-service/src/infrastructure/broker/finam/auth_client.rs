@@ -1,6 +1,6 @@
 use shared::{
     application::errors::app_errors::AppError,
-    messages::grpc::tradeapi::v1::auth::{self, auth_service_client},
+    proto::finam::grpc::tradeapi::v1::auth::{self, auth_service_client},
 };
 use std::{
     sync::{Arc, RwLock},

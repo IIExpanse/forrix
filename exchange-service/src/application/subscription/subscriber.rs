@@ -1,7 +1,7 @@
 use hyper::Uri;
 use shared::{
     application::errors::app_errors::AppError,
-    messages::grpc::tradeapi::v1::marketdata::{
+    proto::finam::grpc::tradeapi::v1::marketdata::{
         Bar, SubscribeBarsRequest, TimeFrame,
         market_data_service_client::{self, MarketDataServiceClient},
     },
