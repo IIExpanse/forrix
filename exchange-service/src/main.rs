@@ -4,8 +4,8 @@ use tracing::Level;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 use crate::application::security::auth_manager::AuthManager;
-use crate::application::subscription::subscriber::BarsSubscriber;
-use crate::application::subscription::subscriber::Subscriber;
+use crate::application::subscription::finam::subscriber::FinamBarsSubscriber;
+use crate::application::subscription::finam::subscriber::Subscriber;
 
 mod application;
 mod domain;
@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_token = env::var("API_TOKEN").expect("API_TOKEN must be provided.");
 
     let auth_manager = AuthManager::new(&api_url, &api_token).await;
-    let mut bars_subscriber = BarsSubscriber::new(&api_url, &auth_manager).await?;
+    let mut bars_subscriber = FinamBarsSubscriber::new(&api_url, &auth_manager).await?;
     bars_subscriber.subscribe().await?;
 
     tokio::signal::ctrl_c().await.unwrap();

@@ -13,22 +13,23 @@ use tracing::{error, warn};
 
 use crate::application::security::auth_manager::{AuthInterceptor, AuthManager};
 
+// todo: move to parent module
 pub trait Subscriber<T> {
     async fn subscribe(&mut self) -> Result<(), AppError>;
 
     fn on_message(&self, message: T);
 }
 
-pub struct BarsSubscriber {
+pub struct FinamBarsSubscriber {
     market_data_client: MarketDataServiceClient<InterceptedService<Channel, AuthInterceptor>>,
     subscription_handle: Option<JoinHandle<Result<(), AppError>>>,
 }
 
-impl BarsSubscriber {
+impl FinamBarsSubscriber {
     pub async fn new(
         api_url: &str,
         auth_manager: &AuthManager,
-    ) -> Result<BarsSubscriber, AppError> {
+    ) -> Result<FinamBarsSubscriber, AppError> {
         let channel = Channel::builder(Uri::from_str(api_url).expect("API_URL must be valid."))
             .tls_config(tonic::transport::ClientTlsConfig::new().with_native_roots())
             .map_err(|e| AppError {
@@ -47,14 +48,14 @@ impl BarsSubscriber {
                 channel,
                 auth_manager.get_auth_interceptor(),
             );
-        Ok(BarsSubscriber {
+        Ok(FinamBarsSubscriber {
             market_data_client,
             subscription_handle: None,
         })
     }
 }
 
-impl Subscriber<&Bar> for BarsSubscriber {
+impl Subscriber<&Bar> for FinamBarsSubscriber {
     async fn subscribe(&mut self) -> Result<(), AppError> {
         let sub_request = SubscribeBarsRequest {
             symbol: "IMOEXF@RTSX".to_string(),
@@ -116,7 +117,7 @@ impl Subscriber<&Bar> for BarsSubscriber {
     }
 }
 
-impl Drop for BarsSubscriber {
+impl Drop for FinamBarsSubscriber {
     fn drop(&mut self) {
         if let Some(handle) = &self.subscription_handle {
             handle.abort()
