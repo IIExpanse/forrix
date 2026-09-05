@@ -5,7 +5,7 @@
       "name": "Rust: Debug with args",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/target/debug/change_me", // Replace 'change_me' with your binary name
+      "program": "${workspaceFolder}/target/debug/trade-service",
       "args": [
         "--config",
         "${workspaceFolder}/config.toml",
