@@ -19,5 +19,13 @@
         "[x]",
         "todo"
     ],
-    "rust-analyzer.workspace.symbol.search.scope": "workspace_and_dependencies"
+    "rust-analyzer.workspace.symbol.search.scope": "workspace_and_dependencies",
+    "folder-color.pathColors": [
+        {
+            "extension": "rs",
+            "color": "foldercolorizer.color_d7875f"
+        }
+    ],
+    "explorer.decorations.badges": true,
+    "editor.mouseWheelZoom": true
 }
