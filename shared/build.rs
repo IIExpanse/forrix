@@ -6,6 +6,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &[
                 "protos/finam/grpc/tradeapi/v1/marketdata/marketdata_service.proto",
                 "protos/finam/grpc/tradeapi/v1/auth/auth_service.proto",
+                "protos/finam/grpc/tradeapi/v1/orders/orders_service.proto",
             ],
             &["protos/finam"],
         )?;
